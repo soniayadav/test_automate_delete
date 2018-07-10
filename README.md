@@ -1,4 +1,3 @@
 # test_automate_delete
-develop
-conflict resolved
+test merged branch
 
