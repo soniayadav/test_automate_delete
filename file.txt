@@ -1,1 +1,25 @@
-12
+
+
+#!/bin/sh
+#Display total number of arguments passed to the script.
+echo "Total number of arguments passed to the script are branch name : $1 target : $2"
+
+echo "Refreshing thinkservice git branches..."
+git fetch --prune
+echo "Refresh Completed."
+
+if [ "$2" = "-r" ]
+then 
+    echo "Deleting remote branches which are merged with => $1"
+    git branch --merged $1 $2 | grep origin | grep -Ev "master|develop" | xargs -L1 | awk '{split($0,a,"/"); print a[2]}' | xargs git push origin -d 
+    echo "Remote branches deleted successfully."
+elif [ "$2" = "-a" ]
+then
+    echo "Deleting every branch except the one that you currently have checked out"
+    for b in `git branch --merged | grep -v \*`; do git branch -D $b; done
+    echo "Local branches deleted successfully"
+else
+    echo "Deleting all local branches but $1 and the current one, only if they are fully merged with $1"
+    git branch | grep -v $1 | grep -v ^* | xargs git branch -d;
+    echo "Local branches deleted successfully"
+fi
